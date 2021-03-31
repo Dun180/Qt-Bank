@@ -44,7 +44,10 @@ set(PROJECT_SOURCES
         welcomewindow.cpp
         welcomewindow.h
         welcomewindow.ui
+        winsthread.cpp
+        winsthread.h
         main.cpp
+        textfinder.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

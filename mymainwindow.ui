@@ -98,6 +98,19 @@
      <string>当前排队号：</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="windowsView">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>200</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>查看窗口</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

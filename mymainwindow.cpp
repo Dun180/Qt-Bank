@@ -9,9 +9,32 @@ MyMainWindow::MyMainWindow(QWidget *parent)
     , ui(new Ui::MyMainWindow)
 {
     ui->setupUi(this);
-    wait = new Queue<int>;
-    function = new Function();
+    number = 1; //初始化排队编号
+    wait = new Queue<Customer>;
+
     i = 1;
+
+    //初始化窗口
+    int evaluateTime = 0; //评价次数
+    int evaluateSum = 0; //评价总分
+
+    QFile inputFile("://data/evaluation.txt");    // 指定文件
+
+
+    bool isOk = inputFile.open(QIODevice::ReadOnly);    // 只读打开：
+
+    if(isOk == true){
+        QTextStream stream(&inputFile);    // 文本流：
+        stream >> evaluateTime >> evaluateSum;//读取
+        qDebug()<<evaluateTime<<" "<<evaluateSum;
+        BusinessWindow w(false,0,evaluateTime,evaluateSum);
+        wins.emplace_back(w);
+        inputFile.close();//关闭文本流
+    }else{
+        qDebug()<<"打开失败";
+    }
+
+
 }
 
 MyMainWindow::~MyMainWindow()
@@ -32,20 +55,33 @@ void MyMainWindow::on_enter_clicked()
 
 void MyMainWindow::on_enqueue_clicked()
 {
-    int *j = &i;
-    qDebug()<<"开始入队";
-    wait->enQueue(j);
-    Qnode<int> *d = wait->getFront();
-    int k = *(d->data);
-    ui->label_2->setText(QString::number(k));
-    i++;
+    Customer *customer = new Customer(false,number);
+    qDebug()<<"创建顾客:"<<QString::number(number);
+    number++;
+
+    wait->enQueue(customer);
+
 }
 
 void MyMainWindow::on_dequeue_clicked()
 {
     qDebug()<<"开始出队";
-    int *j = wait->deQueue();
-    Qnode<int> *d = wait->getFront();
-    int k = *(d->data);
-    ui->label_2->setText(QString::number(k));
+    Customer *customer = wait->deQueue();
+    wins[0].setCustomer(customer);
+    //delete(customer);
+}
+
+void MyMainWindow::on_windowsView_clicked()
+{
+    QDialog *dialog = new QDialog();
+    QLabel *label = new QLabel(dialog);
+    QLabel *customerNumber = new QLabel(dialog);
+    label->move(20,20);
+    label->setText("当前顾客编号");
+    customerNumber->move(20,80);
+    customerNumber->setText(QString::number(wins[0].getCustomer()->getNumber()));
+    dialog->setWindowTitle("窗口1");
+    dialog->resize(100,100);
+    dialog->show();
+
 }

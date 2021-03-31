@@ -25,10 +25,14 @@ private slots:
 
     void on_dequeue_clicked();
 
+    void on_windowsView_clicked();
+
 private:
     Ui::MyMainWindow *ui;
-    Queue<int> *wait;   //排队等待队列
-    Function *function;
+    Queue<Customer> *wait;   //排队等待队列
+    vector<BusinessWindow> wins;//窗口
+
+    int number;//编号
     int i;
 };
 #endif // MYMAINWINDOW_H
