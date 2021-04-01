@@ -1,7 +1,7 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
-
+#include "QObject"
 #include "utils.h"
 #include "customer.h"
 #include "queue.h"
@@ -9,7 +9,10 @@
 /*
 * 排队功能实现类
 */
-class Function{
+class Function : public QObject{
+    Q_OBJECT
+    friend class MyMainWindow;
+    friend class WinsThread;
     private:
     int number;  //编号
     int numberOfLine;//排队人数
@@ -21,7 +24,7 @@ class Function{
     Queue<Customer> *vipWait = NULL; //vip等候队列
     BusinessWindow *vipWin = NULL;  //Vip窗口
     mutex m;    //创建互斥锁对象
-    vector<thread> wins_thread;//线程窗口 每个线程对应下标相同的窗口
+    //vector<thread> wins_thread;//线程窗口 每个线程对应下标相同的窗口
     vector<BusinessWindow> wins;//窗口
     int numOfWindow = 3;    //窗口数量
     int firstWindow = -1;   //最先完成的窗口
@@ -50,5 +53,8 @@ class Function{
     void endMenu(); //终止菜单
     void countDown();//倒计时
     void countDownVip();//vip倒计时
+
+signals:
+    void changeLabel(int l,int num);
 };
 #endif // FUNCTION_H

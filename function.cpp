@@ -16,26 +16,31 @@ Function::Function(){
     countFlag = false;
     winflag = 0;
     //初始化窗口
-    ifstream win_infile("../data/evaluation.txt",ios::in);//打开文件准备读取
-    if(!win_infile){
-        qDebug()<<"文件读取失败";
-    }
     int evaluateTime = 0; //评价次数
     int evaluateSum = 0; //评价总分
-    for(int i=0;i<numOfWindow;i++){
-            win_infile >> evaluateTime >> evaluateSum;//读取
-            qDebug()<<"窗口编号"<<i+1;
-            qDebug()<<"评价次数"<<evaluateTime;
-            qDebug()<<"评价总分"<<evaluateSum;
-            BusinessWindow w(false, i, evaluateTime, evaluateSum);
-            wins.emplace_back(w);
+
+    QFile inputFile("://data/evaluation.txt");    // 指定文件
+
+    if(!inputFile.open(QIODevice::ReadOnly)){
+        qDebug()<<"文件读取失败";
+    }else{
+        QTextStream stream(&inputFile);
+        for(int i=0;i<numOfWindow;i++){
+                stream >> evaluateTime >> evaluateSum;//读取
+                qDebug()<<"窗口编号"<<i+1;
+                qDebug()<<"评价次数"<<evaluateTime;
+                qDebug()<<"评价总分"<<evaluateSum;
+                BusinessWindow w(false, i, evaluateTime, evaluateSum);
+                wins.emplace_back(w);
+        }
+        stream >> evaluateTime >> evaluateSum;//
+        qDebug()<<"窗口编号 vip";
+        qDebug()<<"评价次数"<<evaluateTime;
+        qDebug()<<"评价总分"<<evaluateSum;
+        vipWin = new BusinessWindow(true, -1, evaluateTime, evaluateSum);
+        inputFile.close();
     }
-    win_infile >> evaluateTime >> evaluateSum;//
-    qDebug()<<"窗口编号 vip";
-    qDebug()<<"评价次数"<<evaluateTime;
-    qDebug()<<"评价总分"<<evaluateSum;
-    vipWin = new BusinessWindow(true, -1, evaluateTime, evaluateSum);
-    win_infile.close();
+
 }
 Function::~Function(){
     delete(wait);
@@ -51,8 +56,8 @@ void Function::getNumber(){
     qDebug()<<"创建顾客"<<QString::number(num);
     number++;   //number递增
     numberOfLine++; //排队人数增加
-    Utils::cleanConsole(14,20,8);//清除上一个数据
-    Utils::writeChar(15, 8, to_string(numberOfLine), 15);//打印排队人数
+    //Utils::cleanConsole(14,20,8);//清除上一个数据
+    //Utils::writeChar(15, 8, to_string(numberOfLine), 15);//打印排队人数
     wait->enQueue(customer);   //入等待队列
 }
 
@@ -63,8 +68,8 @@ void Function::getVipNumber(){
     qDebug()<<"创建vip"<<QString::number(num);
     vipNumber++;   //number递增
     vipWaitNumber++; //排队人数增加
-    Utils::cleanConsole(47,53,8);//清除上一个数据
-    Utils::writeChar(48, 8, to_string(vipWaitNumber), 15);//打印排队人数
+    //Utils::cleanConsole(47,53,8);//清除上一个数据
+    //Utils::writeChar(48, 8, to_string(vipWaitNumber), 15);//打印排队人数
     vipWait->enQueue(customer);   //入等待队列
 }
 
@@ -73,8 +78,8 @@ Customer *Function::getCustomerNumber(){
     Customer *customer = new Customer(false,number);    //创建Customer对象
     number++;   //number递增
     numberOfLine++; //排队人数增加
-    Utils::cleanConsole(14,20,8);//清除上一个数据
-    Utils::writeChar(15, 8, to_string(numberOfLine), 15);//打印排队人数
+    //Utils::cleanConsole(14,20,8);//清除上一个数据
+    //Utils::writeChar(15, 8, to_string(numberOfLine), 15);//打印排队人数
     wait->enQueue(customer);   //入等待队列
     return customer;
 }
@@ -96,20 +101,19 @@ void Function::callNumber(){
             return;
         }
     numberOfLine--; //排队人数减少
-    Utils::cleanConsole(14,20,8);//清除上一个数据
-    Utils::writeChar(15, 8, to_string(numberOfLine), 15);//打印排队人数
     for(int i=0;i<numOfWindow;i++)
         {
             if(wins[i].getIsNull()){
                 wins[i].setCustomer(customer);
-                Utils::writeChar(5+i*10, 12, customer->getStringNumber(), 15);
+                emit changeLabel(i,customer->getNumber());
+                //Utils::writeChar(5+i*10, 12, customer->getStringNumber(), 15);
                 break;
             }
         }
 
     }else{
         Customer *customer = wait->getFront()->data; //
-        //Utils::ylog.W(__FILE__, __LINE__, YLog::INFO, "窗口已满，退出",ylogNull);
+        qDebug()<<"窗口已满,退出";
         if(customer!=NULL){
             callNumber(winflag);
             ++winflag;
@@ -126,10 +130,9 @@ void Function::callNumber(int flag){
         return;
     }
     numberOfLine--; //排队人数减少
-    Utils::cleanConsole(14,20,8);//清除上一个数据
-    Utils::writeChar(15, 8, to_string(numberOfLine), 15);//打印排队人数
     wins[flag].setCustomer(customer);
-    Utils::writeChar(5+flag*10, 12, customer->getStringNumber(), 15);
+    emit changeLabel(flag,customer->getNumber());
+    //Utils::writeChar(5+flag*10, 12, customer->getStringNumber(), 15);
 
 }
 
@@ -145,8 +148,8 @@ void Function::createSimulation(){
         getVipNumber();    //取号
         vipWaitTime += random(3,6);    //随机生成3~6秒的等待时间
     }
-    Utils::cleanConsole(18,24,9);//清除上一个数据
-    Utils::writeChar(19, 9, to_string(waitTime/3), 15);//打印等待时间
+    //Utils::cleanConsole(18,24,9);//清除上一个数据
+    //Utils::writeChar(19, 9, to_string(waitTime/3), 15);//打印等待时间
 }
  //进度条
 void Function::progressBar(int win){
@@ -256,56 +259,56 @@ void Function::sava(){
 }
 
 //多线程实现
-void Function::multithreading(){
-    threadFlag2 = true;
-    createSimulation();//创建模拟
-    for (int i = 0; i < numOfWindow; i++)
-    {
-        Function::callNumber();
-    }
-        for (int i = 0; i < numOfWindow; i++)
-    {
-        wins_thread.emplace_back(std::thread(&Function::transactionProcessing,this,i));
+//void Function::multithreading(){
+//    threadFlag2 = true;
+//    createSimulation();//创建模拟
+//    for (int i = 0; i < numOfWindow; i++)
+//    {
+//        Function::callNumber();
+//    }
+//        for (int i = 0; i < numOfWindow; i++)
+//    {
+//        wins_thread.emplace_back(std::thread(&Function::transactionProcessing,this,i));
 
-    }
-        wins_thread.emplace_back(std::thread(&Function::vipThread,this));
-        wins_thread.emplace_back(std::thread(&Function::countDown,this));
-        wins_thread.emplace_back(std::thread(&Function::countDownVip,this));
-    //中止线程
-        for (int i = 0; i < (int)wins_thread.size(); i++)
-    {
-        wins_thread[i].join();
+//    }
+//        wins_thread.emplace_back(std::thread(&Function::vipThread,this));
+//        wins_thread.emplace_back(std::thread(&Function::countDown,this));
+//        wins_thread.emplace_back(std::thread(&Function::countDownVip,this));
+//    //中止线程
+//        for (int i = 0; i < (int)wins_thread.size(); i++)
+//    {
+//        wins_thread[i].join();
 
-    }
-    countFlag = true;//终止倒计时
-    Sleep(1000);
-    system("cls");
-    progressBar(firstWindow);
-    evaluate(firstWindow);//评价
-    sava();//保存评价
-    endMenu();
-    exit(0);
+//    }
+//    countFlag = true;//终止倒计时
+//    Sleep(1000);
+//    system("cls");
+//    progressBar(firstWindow);
+//    evaluate(firstWindow);//评价
+//    sava();//保存评价
+//    endMenu();
+//    exit(0);
 
-}
+//}
 
 //vip窗口
-void Function::vipWindow(){
-    createSimulation();//创建模拟
+//void Function::vipWindow(){
+//    createSimulation();//创建模拟
 
-    for (int i = 0; i < numOfWindow; i++)
-    {
-        Function::callNumber();
-    }
-        for (int i = 0; i < numOfWindow; i++)
-    {
-        wins_thread.emplace_back(std::thread(&Function::transactionProcessing,this,i));
+//    for (int i = 0; i < numOfWindow; i++)
+//    {
+//        Function::callNumber();
+//    }
+//        for (int i = 0; i < numOfWindow; i++)
+//    {
+//        wins_thread.emplace_back(std::thread(&Function::transactionProcessing,this,i));
 
-    }
-    wins_thread.emplace_back(std::thread(&Function::countDown,this));
-    wins_thread.emplace_back(std::thread(&Function::countDownVip,this));
-    vipThread();
+//    }
+//    wins_thread.emplace_back(std::thread(&Function::countDown,this));
+//    wins_thread.emplace_back(std::thread(&Function::countDownVip,this));
+//    vipThread();
 
-}
+//}
 //vip线程
 void Function::vipThread(){
 

@@ -7,6 +7,7 @@ WelcomeWindow::WelcomeWindow(QWidget *parent) :
     ui(new Ui::WelcomeWindow)
 {
     ui->setupUi(this);
+
 }
 
 WelcomeWindow::~WelcomeWindow()
@@ -22,6 +23,7 @@ void WelcomeWindow::on_pushButton_clicked()
                            tr("你是vip吗"),QMessageBox::Yes,QMessageBox::No);
        if(ret1 == QMessageBox::No) {
            MyMainWindow *w = new MyMainWindow;
+
            w->show();
            qDebug()<<tr("普通用户");
        }else{
