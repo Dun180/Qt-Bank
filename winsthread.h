@@ -20,6 +20,7 @@ public slots:
 signals:
     void setNumOfLine(int num);
     void setViewCustomer(int l,int num);
+    void endSignal();
 };
 
 #endif // WINSTHREAD_H

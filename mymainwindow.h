@@ -32,17 +32,20 @@ private slots:
 public slots:
     void windowViewChange(int l,int num);
     void viewNumOfLine(int num);
+    void endThread();
 signals:
     void workStart(int identifer,Function* function);
 private:
-    QThread *wthread;
+    vector<QThread*> wthreads;
+    vector<WinsThread*> winsthreads;
+    QMutex m_mutex;
+
     Ui::MyMainWindow *ui;
     Queue<Customer> *wait;   //排队等待队列
     vector<BusinessWindow> wins;//窗口
     QDialog *dialog;
     QVector<QLabel*> customerNumber;
-    int number;//编号
-    int i;
+
 
     Function *function;
 

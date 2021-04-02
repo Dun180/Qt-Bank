@@ -14,6 +14,7 @@ void WinsThread::transactionProcessing(int identifier,Function* function)
         if(function->threadFlag) return;
         Customer *customer = NULL;
         {
+            QMutexLocker locker(&m_mutex);
             customer = function->wait->getFront()->data;//获取将要出队的顾客对象；
             if(customer == NULL){
                 QMutexLocker locker(&m_mutex);
@@ -33,7 +34,16 @@ void WinsThread::transactionProcessing(int identifier,Function* function)
         {
             QMutexLocker locker(&m_mutex);
             qDebug()<<identifier<<"号窗口正在办理业务的顾客为"<<customer->getNumber();
+
         }
         emit setViewCustomer(identifier,customer->getNumber());
     }while(function->wait->getFront()->data!=NULL);
+
+        if(function->threadFlag == false){
+            QMutexLocker locker(&m_mutex);
+            qDebug()<<"线程"<<identifier<<"结束";
+            function->threadFlag = true;
+            emit endSignal();
+
+    }
 }
