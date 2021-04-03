@@ -1,7 +1,8 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
-#include "QObject"
+#include <QObject>
+#include <QMutex>
 #include "utils.h"
 #include "customer.h"
 #include "queue.h"
@@ -14,6 +15,7 @@ class Function : public QObject{
     friend class MyMainWindow;
     friend class WinsThread;
     private:
+    QMutex m_mutex;
     int number;  //编号
     int numberOfLine;//排队人数
     int waitTime;   //等待时间
@@ -32,6 +34,8 @@ class Function : public QObject{
     bool threadFlag2;    //线程提前终止的标志
     bool countFlag;     //倒计时终止的标志
     int winflag; //窗口标志
+    vector<bool> endflag;//窗口结束标志
+    bool allEndFlag;
     public:
     Function();
     ~Function();

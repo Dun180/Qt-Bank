@@ -15,6 +15,7 @@ Function::Function(){
     threadFlag2 = false;
     countFlag = false;
     winflag = 0;
+    allEndFlag = false;
     //初始化窗口
     int evaluateTime = 0; //评价次数
     int evaluateSum = 0; //评价总分

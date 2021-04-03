@@ -36,8 +36,8 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>500</x>
-      <y>390</y>
+      <x>190</x>
+      <y>400</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -49,21 +49,21 @@
    <widget class="QPushButton" name="start">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>380</y>
+      <x>190</x>
+      <y>320</y>
       <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>进入</string>
+     <string>模拟</string>
     </property>
    </widget>
    <widget class="QPushButton" name="enqueue">
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>280</y>
+      <y>80</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -75,8 +75,8 @@
    <widget class="QPushButton" name="dequeue">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>330</y>
+      <x>340</x>
+      <y>80</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -95,14 +95,14 @@
      </rect>
     </property>
     <property name="text">
-     <string>当前排队人数：</string>
+     <string>前方排队人数：</string>
     </property>
    </widget>
    <widget class="QPushButton" name="windowsView">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>200</y>
+      <x>190</x>
+      <y>360</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -121,7 +121,33 @@
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>280</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>您的排队编号：</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="queueNum">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>280</y>
+      <width>54</width>
+      <height>12</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
@@ -164,8 +190,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>525</x>
-     <y>417</y>
+     <x>215</x>
+     <y>445</y>
     </hint>
     <hint type="destinationlabel">
      <x>551</x>

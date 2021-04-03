@@ -5,9 +5,11 @@
 #include "utils.h"
 #include "queue.h"
 #include "function.h"
-#include "QLabel"
+#include <QLabel>
 #include "winsthread.h"
-#include "QThread"
+#include <QThread>
+#include <QProgressDialog>
+#include "evaluatewindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MyMainWindow; }
@@ -20,14 +22,15 @@ class MyMainWindow : public QMainWindow
 public:
     MyMainWindow(QWidget *parent = nullptr);
     ~MyMainWindow();
-
-    void start();
+    void businessWork();
 
 private slots:
     void on_enqueue_clicked();
     void on_dequeue_clicked();
     void on_windowsView_clicked();
     void on_start_clicked();
+    void progressBar();
+    void evaluate();//评价
 
 public slots:
     void windowViewChange(int l,int num);
@@ -45,7 +48,7 @@ private:
     vector<BusinessWindow> wins;//窗口
     QDialog *dialog;
     QVector<QLabel*> customerNumber;
-
+    QDialog *chooseBusiness;
 
     Function *function;
 

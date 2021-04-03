@@ -44,6 +44,9 @@ set(PROJECT_SOURCES
         welcomewindow.cpp
         welcomewindow.h
         welcomewindow.ui
+        evaluatewindow.cpp
+        evaluatewindow.h
+        evaluatewindow.ui
         winsthread.cpp
         winsthread.h
         main.cpp

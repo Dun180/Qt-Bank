@@ -4,6 +4,7 @@
 #include <QObject>
 #include <function.h>
 #include <QMutex>
+#include <QMutexLocker>
 #include <QThread>
 
 class WinsThread : public QObject
