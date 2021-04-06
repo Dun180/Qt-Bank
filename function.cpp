@@ -137,6 +137,20 @@ void Function::callNumber(int flag){
 
 }
 
+//vip叫号
+void Function::callVipNumber(){
+    Customer *customer = vipWait->deQueue();
+    if(customer == NULL){
+        qDebug()<<"无等待人员，叫号失败";
+        return;
+    }
+    vipWaitNumber--;
+    vipWin->setCustomer(customer);
+    emit changeLabel(customer->getNumber(),0);
+
+
+}
+
 //创建模拟
 void Function::createSimulation(){
     int wait = random(10,20);  //随机生成10~20个排队等待人员
@@ -149,8 +163,7 @@ void Function::createSimulation(){
         getVipNumber();    //取号
         vipWaitTime += random(3,6);    //随机生成3~6秒的等待时间
     }
-    //Utils::cleanConsole(18,24,9);//清除上一个数据
-    //Utils::writeChar(19, 9, to_string(waitTime/3), 15);//打印等待时间
+
 }
  //进度条
 void Function::progressBar(int win){
@@ -244,19 +257,34 @@ void Function::evaluate(int win)
 }
 
 //保存评价
-void Function::sava(){
-    ofstream win_outfile("../data/evaluation.txt",ios::out);
-    if(!win_outfile){
-        qDebug()<<"文件写入失败";
+void Function::save(){
+    QFile outputFile("D:\\forlearning\\QtProject\\BankQueueSystem\\data\\evaluation.txt");
+
+    if(!outputFile.open(QIODevice::WriteOnly)){
+        qDebug()<<"文件打开失败";
+    }else{
+        qDebug()<<"文件打开成功";
+        QTextStream stream(&outputFile);
+        for(int i=0;i<numOfWindow;i++){
+            stream << wins[i].getEvaluateTime() <<" "<< wins[i].getEvaluateSum() << "\n" ;//写入
+        }
+        qDebug()<<"普通窗口写入成功";
+        stream<<vipWin->getEvaluateTime()<<" "<<" "<<vipWin->getEvaluateSum()<<"\n";
+        qDebug()<<"vip窗口写入成功";
+        outputFile.close();
     }
-    vector<BusinessWindow>::iterator t;
-    for(t = wins.begin();t != wins.end();++t){
-        win_outfile<<t->getEvaluateTime()<<" "<<t->getEvaluateSum()<<"\n";
-    }
-    qDebug()<<"普通窗口写入成功";
-    win_outfile<<vipWin->getEvaluateTime()<<" "<<vipWin->getEvaluateSum()<<"\n";
-    qDebug()<<"vip窗口写入成功";
-    win_outfile.close();
+//    ofstream win_outfile("../data/evaluation.txt",ios::out);
+//    if(!win_outfile){
+//        qDebug()<<"文件写入失败";
+//    }
+//    vector<BusinessWindow>::iterator t;
+//    for(t = wins.begin();t != wins.end();++t){
+//        win_outfile<<t->getEvaluateTime()<<" "<<t->getEvaluateSum()<<"\n";
+//    }
+//    qDebug()<<"普通窗口写入成功";
+//    win_outfile<<vipWin->getEvaluateTime()<<" "<<vipWin->getEvaluateSum()<<"\n";
+//    qDebug()<<"vip窗口写入成功";
+//    win_outfile.close();
 }
 
 //多线程实现
@@ -383,7 +411,7 @@ void Function::vipThread(){
         exit(-1);
     }
 
-    sava();//保存评价
+    save();//保存评价
     endMenu();
 
 }

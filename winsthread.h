@@ -2,7 +2,7 @@
 #define WINSTHREAD_H
 
 #include <QObject>
-#include <function.h>
+#include "function.h"
 #include <QMutex>
 #include <QMutexLocker>
 #include <QThread>

@@ -17,7 +17,7 @@ MyMainWindow::MyMainWindow(QWidget *parent)
 
 
     //初始化view窗口
-    dialog = new QDialog();
+    dialog = new QDialog(this);
     dialog->setWindowTitle("view窗口");
     dialog->resize(400,100);
     QLabel *label1 = new QLabel(dialog);
@@ -28,7 +28,7 @@ MyMainWindow::MyMainWindow(QWidget *parent)
     label1->move(20,60);
     label1->setText("当前顾客编号");
     label2->move(20,20);
-    label2->setText("窗口编号                  1              2              3              VIP");
+    label2->setText("窗口编号                  1              2              3");
 
     for(int i=0;i<function->numOfWindow;i++){
         QLabel *number = new QLabel(dialog);
@@ -48,6 +48,8 @@ MyMainWindow::~MyMainWindow()
         wthreads[i]->quit();
         wthreads[i]->wait();
     }
+    cthread->quit();
+    cthread->wait();
     delete ui;
 }
 
@@ -62,15 +64,20 @@ void MyMainWindow::businessWork()
     if(ret2 == QMessageBox::Ok) {
         qDebug()<<tr("选择业务！");
         chooseBusiness = new QDialog();
-        chooseBusiness->resize(300,300);
+        chooseBusiness->resize(200,150);
+        QLabel *label = new QLabel(chooseBusiness);
         QPushButton *b1 = new QPushButton(chooseBusiness);
         QPushButton *b2 = new QPushButton(chooseBusiness);
         connect(b1,&QPushButton::clicked,this,&MyMainWindow::progressBar);
+        connect(b2,&QPushButton::clicked,this,&MyMainWindow::progressBar);
+
+        label->setText("请选择您要办理的业务");
         b1->setText("存取款");
         b2->setText("办卡");
 
-        b1->move(20,150);
-        b2->move(100,150);
+        label->move(20,20);
+        b1->move(20,90);
+        b2->move(100,90);
 
         chooseBusiness->show();
     }
@@ -109,13 +116,35 @@ void MyMainWindow::viewNumOfLine(int num)
 
 void MyMainWindow::endThread()
 {
-    for(int i = 0; i < function->numOfWindow; i++){
-        wthreads[i]->quit();
-        wthreads[i]->wait();
-    }
+    //for(int i = 0; i < function->numOfWindow; i++){
+        //wthreads[i]->quit();
+        //wthreads[i]->wait();
+    //}
+    //cthread->quit();
+    //cthread->wait();
     qDebug()<<"排队模拟完成";
     this->businessWork();
 }
+
+void MyMainWindow::setEvaluation(int i)
+{
+    if(i > 0){
+        function->wins[function->firstWindow].setEvaluate(i);
+    }
+    function->save();
+    evaluateWindow->close();
+    QMessageBox::about(this,tr("end"),
+                       tr("谢谢合作，再见！"));
+}
+
+void MyMainWindow::setWaitTime(int time)
+{
+    if(time == 0){
+        ui->waitTime->setText("即将轮到您，请稍等");
+    }else{
+        ui->waitTime->setNum(time);
+    }
+    }
 
 void MyMainWindow::on_start_clicked()
 {
@@ -151,10 +180,22 @@ void MyMainWindow::on_start_clicked()
         }
         emit workStart(i,function);
     }
+    //开启倒计时线程
+    cthread = new QThread();
+    CountDownThread *countDownThread = new CountDownThread();
+    countDownThread->moveToThread(cthread);
+    connect(cthread,&QThread::finished,cthread,&QObject::deleteLater);
+    connect(cthread,&QThread::finished,countDownThread,&QObject::deleteLater);
+    connect(this,&MyMainWindow::countDownTime,countDownThread,&CountDownThread::countDown);
+    connect(countDownThread,&CountDownThread::sendWaitTime,this,&MyMainWindow::setWaitTime);
+    cthread->start();
+    emit countDownTime((function->waitTime/3));
+
     //提示对话框
-    int ret2 = QMessageBox::information(this,tr("提示"),
+    int ret = QMessageBox::information(this,tr("提示"),
                             tr("您的排队号码为：")+QString::number(function->number)+tr("，请牢记！"),QMessageBox::Ok);
-    if(ret2 == QMessageBox::Yes) qDebug()<<tr("提示！");
+    if(ret == QMessageBox::Yes) qDebug()<<tr("提示！");
+
 
 }
 
@@ -177,7 +218,9 @@ void MyMainWindow::progressBar()
 
 void MyMainWindow::evaluate()
 {
-    EvaluateWindow *e = new EvaluateWindow();
-    e->show();
+    evaluateWindow = new EvaluateWindow();
+    connect(evaluateWindow,&EvaluateWindow::sendEvaluate,this,&MyMainWindow::setEvaluation);
+    evaluateWindow->show();
 
 }
+

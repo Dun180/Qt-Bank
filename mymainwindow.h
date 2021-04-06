@@ -10,6 +10,7 @@
 #include <QThread>
 #include <QProgressDialog>
 #include "evaluatewindow.h"
+#include "countdownthread.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MyMainWindow; }
@@ -32,15 +33,20 @@ private slots:
     void progressBar();
     void evaluate();//评价
 
+
 public slots:
     void windowViewChange(int l,int num);
     void viewNumOfLine(int num);
     void endThread();
+    void setEvaluation(int i);
+    void setWaitTime(int time);
 signals:
     void workStart(int identifer,Function* function);
+    void countDownTime(int time);
 private:
     vector<QThread*> wthreads;
     vector<WinsThread*> winsthreads;
+    QThread *cthread;
     QMutex m_mutex;
 
     Ui::MyMainWindow *ui;
@@ -49,6 +55,7 @@ private:
     QDialog *dialog;
     QVector<QLabel*> customerNumber;
     QDialog *chooseBusiness;
+    EvaluateWindow *evaluateWindow;
 
     Function *function;
 

@@ -30,7 +30,7 @@ void WinsThread::transactionProcessing(int identifier,Function* function)
         }
 
         if(function->numberOfLine>0) function->numberOfLine--;//排队人数减少
-        emit setNumOfLine(function->numberOfLine);//发射自减信号
+        emit setNumOfLine(function->numberOfLine);//发射信号
 
         int evaluate = random(2,5);//随机生成评价
         function->wins[identifier].setEvaluate(evaluate);

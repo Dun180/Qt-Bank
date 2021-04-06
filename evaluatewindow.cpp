@@ -12,3 +12,14 @@ EvaluateWindow::~EvaluateWindow()
 {
     delete ui;
 }
+
+void EvaluateWindow::on_pushEvaluation_clicked()
+{
+    int i = ui->comboBox->currentIndex();
+    qDebug()<<"评价为："<<i;
+
+
+    emit sendEvaluate(i);
+
+
+}

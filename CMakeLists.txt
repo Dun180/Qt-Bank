@@ -41,6 +41,9 @@ set(PROJECT_SOURCES
         mymainwindow.cpp
         mymainwindow.h
         mymainwindow.ui
+        vipwindow.cpp
+        vipwindow.h
+        vipwindow.ui
         welcomewindow.cpp
         welcomewindow.h
         welcomewindow.ui
@@ -49,6 +52,10 @@ set(PROJECT_SOURCES
         evaluatewindow.ui
         winsthread.cpp
         winsthread.h
+        vipthread.cpp
+        vipthread.h
+        countdownthread.cpp
+        countdownthread.h
         main.cpp
         textfinder.qrc
 )

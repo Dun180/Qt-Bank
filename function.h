@@ -14,6 +14,9 @@ class Function : public QObject{
     Q_OBJECT
     friend class MyMainWindow;
     friend class WinsThread;
+    friend class VipWindow;
+    friend class VipThread;
+    friend class WelcomeWindow;
     private:
     QMutex m_mutex;
     int number;  //编号
@@ -45,12 +48,13 @@ class Function : public QObject{
     void callNumber();  //叫号(柜台未满时)
     void callNumber(int num);  //叫号
     void callNumberAccordingToTime(); //根据时间叫号
+    void callVipNumber();//叫vip号
     void createSimulation();  //创建模拟
     void transactionProcessing(int flag);   //事务处理
     void multithreading();   //多线程
     void progressBar(int win); //进度条
     void evaluate(int win);//评价
-    void sava();//保存评价
+    void save();//保存评价
     void vipWindow();   //vip窗口
     void vipThread();   //vip线程
     void commentsView(); //查看评价
